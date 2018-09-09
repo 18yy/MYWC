@@ -1,0 +1,5 @@
+   ch=fgetc(fp);
+ //
+h
+b
+b
