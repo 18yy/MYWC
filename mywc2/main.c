@@ -9,13 +9,14 @@
 int charNum = 0; //字符符 
 int wordNum = 0; //单词数 
 int lineNum = 0; //行数
+int spaceLineNum = 0;//空行 
 
 int main(int argc, char *argv[]) {
 	
 	char choice; 
 	
 	count(argv[2]);
-	while((choice = getopt(argc, argv, "c:w:l:")) != -1) {//选项字符串后必须带有参数 
+	while((choice = getopt(argc, argv, "c:w:l:a:")) != -1) {//选项字符串后必须带有参数 
 			switch(choice){
 				case 'c':
 					printf("文件的字符数为:%d\n",charNum);
@@ -26,6 +27,9 @@ int main(int argc, char *argv[]) {
 				case 'l':
 					printf("文件的行数为:%d\n",lineNum+1);
 					break;
+				case 'a':
+					printf("文件的空行数为:%d\n",spaceLineNum+1);
+					break;	
 			}
 		}
 
@@ -37,6 +41,9 @@ void count(char * file){
 	FILE * fp;
     char ch;
     int flag = 0;
+    int num = 0; 
+    int num2 = 0;
+    int lineFlag = 0;
    
     
     if((fp=fopen(file,"r"))==NULL)
@@ -63,6 +70,29 @@ void count(char * file){
 		if(ch=='\n'){
 			lineNum++;
 		}
+		
+		//获取空行 
+		if(ch == '\n'&&lineFlag == 0){
+			lineFlag = 1;
+		}else if(ch != '\n'&&lineFlag == 1){
+			num++;
+		}else if(ch == '\n'&&lineFlag == 1 &&num == 0){
+			lineFlag = 0;
+			spaceLineNum++;
+			
+		}
+		
+//		//获取空行：只有一个符号的情况，测试不通过 
+//  		if(ch == '\n'&&lineFlag == 0){
+//			lineFlag = 1;
+//		}else if(ispunct(ch)&&lineFlag == 1){
+//			num2++;
+//		}else if(ch == '\n'&&lineFlag == 1 &&num2 == 1){
+//			lineFlag = 0;
+//			spaceLineNum++;
+//		}
+		
+
     }
     fclose(fp);
 }
