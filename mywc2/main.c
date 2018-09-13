@@ -8,8 +8,9 @@
 
 int charNum = 0; //字符符 
 int wordNum = 0; //单词数 
-int lineNum = 0; //行数
-int spaceLineNum = 0;//空行 
+int lineNum = 1; //行数
+int spaceLineNum = 1;//空行 
+int annotateLineNum = 1;
 
 int main(int argc, char *argv[]) {
 	
@@ -25,10 +26,13 @@ int main(int argc, char *argv[]) {
 					printf("文件的单词数为:%d\n",wordNum);
 					break;
 				case 'l':
-					printf("文件的行数为:%d\n",lineNum+1);
+					printf("文件的行数为:%d\n",lineNum);
 					break;
 				case 'a':
-					printf("文件的空行数为:%d\n",spaceLineNum+1);
+					printf("文件的空行数为:%d\n",spaceLineNum);
+					break;	
+				case 'b':
+					printf("文件的注释行数为:%d\n",annotateLineNum);
 					break;	
 			}
 		}
@@ -44,6 +48,7 @@ void count(char * file){
     int num = 0; 
     int num2 = 0;
     int lineFlag = 0;
+    int annotateLineFlag = 0;
    
     
     if((fp=fopen(file,"r"))==NULL)
@@ -67,8 +72,10 @@ void count(char * file){
 			wordNum++;
 		}
          
-		if(ch=='\n'){
+		if(ch=='\n'&&charNum!=0){
 			lineNum++;
+		}else if(charNum==0){
+			lineNum=0;
 		}
 		
 		//获取空行 
@@ -92,7 +99,22 @@ void count(char * file){
 //			spaceLineNum++;
 //		}
 		
-
+		//获取注释行
+		if(ch == '//'&&annotateLineFlag==0){
+			annotateLineFlag = 1;
+		}else if(ch == '\n'&&annotateLineFlag==1){
+			annotateLineNum++;
+			annotateLineFlag = 0;
+		}
+		
+//		if(ch == '/*'&&annotateLineFlag == 0){
+//			annotateLineFlag = 1;
+//		}else if(ch == '\n'&&annotateLineFlag == 1){
+//			annotateLineNum++;
+//		}else if(ch == '*/'&&annotateLineNum == 1){
+//			annotateLineNum++;
+//			annotateLineFlag = 0;
+//		}
     }
     fclose(fp);
 }
