@@ -9,15 +9,18 @@
 int charNum = 0; //字符符 
 int wordNum = 0; //单词数 
 int lineNum = 1; //行数
-int spaceLineNum = 1;//空行 
-int annotateLineNum = 1;
+int spaceLineNum = 0;//空行 
+int annotateLineNum = 0;//注释行 
+int codeLineNum = 0;//代码行 
 
 int main(int argc, char *argv[]) {
 	
 	char choice; 
 	
 	count(argv[2]);
-	while((choice = getopt(argc, argv, "c:w:l:a:")) != -1) {//选项字符串后必须带有参数 
+	otherCount(argv[2]);
+	
+	while((choice = getopt(argc, argv, "c:w:l::a:")) != -1) {//选项字符串后必须带有参数 
 			switch(choice){
 				case 'c':
 					printf("文件的字符数为:%d\n",charNum);
@@ -29,11 +32,9 @@ int main(int argc, char *argv[]) {
 					printf("文件的行数为:%d\n",lineNum);
 					break;
 				case 'a':
-					printf("文件的空行数为:%d\n",spaceLineNum);
+					printf("文件的空行数为:%d\n文件的代码行数为：%d\n",spaceLineNum,codeLineNum);
 					break;	
-				case 'b':
-					printf("文件的注释行数为:%d\n",annotateLineNum);
-					break;	
+				
 			}
 		}
 
@@ -41,16 +42,46 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+void otherCount(char *file){
+	FILE * fp;
+	int num = 0;
+	char st[200];
+	
+	if((fp=fopen(file,"r"))==NULL)
+    {
+        printf("read file failed！\n");
+        exit(-1);
+    }
+	
+	
+	while(!feof(fp))                       
+    {
+    	fgets(st,200,fp);
+    	int len=strlen(st);   
+    	int i=0;
+    	
+    	for (i=0;i<len;i++)
+    	{
+    		if (st[i]!=' ' && st[i]!='\n' && st[i]!='\t')
+    			num++;//一行中的其他字符数 
+    	}
+    	
+    	if(num<1){
+    		spaceLineNum++;//空行加一 
+		} else{
+			codeLineNum++;//代码行加一 
+		}
+    	
+	}	
+	fclose(fp);
+} 
+
 void count(char * file){
 	FILE * fp;
     char ch;
     int flag = 0;
-    int num = 0; 
-    int num2 = 0;
     int lineFlag = 0;
-    int annotateLineFlag = 0;
-   
-    
+
     if((fp=fopen(file,"r"))==NULL)
     {
         printf("read file failed！\n");
@@ -72,49 +103,13 @@ void count(char * file){
 			wordNum++;
 		}
          
-		if(ch=='\n'&&charNum!=0){
+        
+		if(ch=='\n'&&charNum!=0){//计算行数 
 			lineNum++;
-		}else if(charNum==0){
+		}else if(charNum==0){//当空文件行数为0
 			lineNum=0;
 		}
-		
-		//获取空行 
-		if(ch == '\n'&&lineFlag == 0){
-			lineFlag = 1;
-		}else if(ch != '\n'&&lineFlag == 1){
-			num++;
-		}else if(ch == '\n'&&lineFlag == 1 &&num == 0){
-			lineFlag = 0;
-			spaceLineNum++;
-			
-		}
-		
-//		//获取空行：只有一个符号的情况，测试不通过 
-//  		if(ch == '\n'&&lineFlag == 0){
-//			lineFlag = 1;
-//		}else if(ispunct(ch)&&lineFlag == 1){
-//			num2++;
-//		}else if(ch == '\n'&&lineFlag == 1 &&num2 == 1){
-//			lineFlag = 0;
-//			spaceLineNum++;
-//		}
-		
-		//获取注释行
-		if(ch == '//'&&annotateLineFlag==0){
-			annotateLineFlag = 1;
-		}else if(ch == '\n'&&annotateLineFlag==1){
-			annotateLineNum++;
-			annotateLineFlag = 0;
-		}
-		
-//		if(ch == '/*'&&annotateLineFlag == 0){
-//			annotateLineFlag = 1;
-//		}else if(ch == '\n'&&annotateLineFlag == 1){
-//			annotateLineNum++;
-//		}else if(ch == '*/'&&annotateLineNum == 1){
-//			annotateLineNum++;
-//			annotateLineFlag = 0;
-//		}
+
     }
     fclose(fp);
 }

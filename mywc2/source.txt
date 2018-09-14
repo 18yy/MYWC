@@ -1,0 +1,5 @@
+if(num<1){
+    spaceLineNum++;//空行加一 
+} else{
+codeLineNum++;//代码行加一 
+}

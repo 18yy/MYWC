@@ -1,8 +1,5 @@
    ch=fgetc(fp);
-
 hh
-
-
 {{
 {
 {
